@@ -1,10 +1,10 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from .views import AppointmentViewSet
 
-router = DefaultRouter()
-router.register('appointments', AppointmentViewSet, basename='appointment')
+router = SimpleRouter()
+router.register("", AppointmentViewSet, basename="appointment")
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

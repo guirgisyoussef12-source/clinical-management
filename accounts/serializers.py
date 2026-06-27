@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-
+from .models import DoctorProfile, PatientProfile
 
 User = get_user_model()
 
@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email"]
+        fields = ["id", "username", "email", "role"]
         read_only_fields = fields
 
 
@@ -17,7 +17,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "email", "password"]
+        fields = ["username", "email", "password", "role"]
 
     def validate_email(self, value):
         email = value.strip().lower()
@@ -36,17 +36,23 @@ class RegisterSerializer(serializers.ModelSerializer):
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
+            role=validated_data.get("role", User.Role.PATIENT),
         )
+
+
 class DoctorProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
     class Meta:
         model = DoctorProfile
         fields = ["id", "user", "phone", "date_of_birth", "specialization", "work_hours"]
-        read_only_fields = ["id","user"]
+        read_only_fields = ["id", "user"]
+
+
 class PatientProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+
     class Meta:
         model = PatientProfile
-        fields = ["id","user","phone","date_of_birth","address","gender"]
-        read_only_fields = ["user","id"]
+        fields = ["id", "user", "phone", "date_of_birth", "address", "gender"]
+        read_only_fields = ["id", "user"]
