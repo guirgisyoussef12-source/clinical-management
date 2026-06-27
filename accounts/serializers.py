@@ -19,6 +19,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "email", "password", "role"]
 
+    def validate_role(self, value):
+        if value == User.Role.RECEPTIONIST:
+            raise serializers.ValidationError(
+                "Receptionist accounts can only be created by an admin."
+            )
+        return value
+
     def validate_email(self, value):
         email = value.strip().lower()
         if User.objects.filter(email__iexact=email).exists():
